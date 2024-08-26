@@ -236,7 +236,7 @@ if __name__ == "__main__":
     Parses command-line arguments, initializes the Voting Terminal, and handles the voting process.
     """
     # Set up command-line argument parsing with default values
-    parser = argparse.ArgumentParser(description="Voting System Parameters")
+    parser = argparse.ArgumentParser(description="\033[96mVoting System Parameters\033[0m")
     parser.add_argument("--num_voters", type=int, default=10, help="Number of voters (default: 10)")
     parser.add_argument("--candidates", type=str, default="Alice,Bob,Charles,David", help="Comma-separated list of candidate names (default: Alice,Bob,Charles,David)")
     parser.add_argument("--num_shares", type=int, default=4, help="Number of shares for secret sharing (default: 4)")
@@ -244,7 +244,7 @@ if __name__ == "__main__":
     parser.add_argument("--mode", type=str, choices=["manual", "automatic"], default="automatic", help="Voting mode, 'manual' or 'automatic' (default: automatic)")
     parser.add_argument("--N", type=int, default=2, help="Number of voters in manual mode (default: 2)")
     parser.add_argument("--buffer_size", type=int, default=16384, help="Buffer size for data transmission (default: 16384)")
-    
+
     args = parser.parse_args()
 
     # Parameters Setup from command line arguments
@@ -252,37 +252,44 @@ if __name__ == "__main__":
     num_voters = args.num_voters
     num_candidates = len(candidate_names)
     
-    num_bits_per_vote = math.floor(math.log2(num_voters)) + 1  # Bits needed to represent each vote
-    total_vote_bits = num_bits_per_vote * num_candidates  # Total number of bits to represent all votes
+    num_bits_per_vote = math.floor(math.log2(num_voters)) + 1
+    total_vote_bits = num_bits_per_vote * num_candidates
     
-    prime_number = nextprime(2**(total_vote_bits - num_bits_per_vote) * (num_candidates + 1))  # Large prime number
+    prime_number = nextprime(2**(total_vote_bits - num_bits_per_vote) * (num_candidates + 1))  
     num_shares = args.num_shares
     threshold = args.threshold
     mode = args.mode
     N = args.N
     buffer_size = args.buffer_size
     
-    print("\033[96mWelcome to the Election!\033[0m\n")
+    # Welcome and instructions
+    print("\n\033[96m=== Welcome to the Election! ===\033[0m\n")
     print(f"\033[93mYou can vote for:\033[0m")
     for i, candidate in enumerate(candidate_names):
         print(f"   \033[93m{i+1}: {candidate}\033[0m")
+
+    print("\n\033[94mInitializing the Voting Terminal...\033[0m")
     
     # Initialize the Voting Terminal
     voting_terminal = VotingTerminal(num_candidates, num_bits_per_vote, num_shares, threshold, prime_number, buffer_size)
 
+    print("\033[92mVoting Terminal is ready!\033[0m\n")
+
     # Example voting process
     if mode == "manual":
+        print("\033[96mManual Voting Mode\033[0m\n")
         for _ in range(N):
             while True:
-                voter_id = input("Enter your voter ID: ")
-                candidate_index = int(input("Enter your vote (index of the candidate): "))
+                voter_id = input("\033[94mEnter your voter ID: \033[0m")
+                candidate_index = int(input("\033[94mEnter your vote (index of the candidate): \033[0m"))
                 vote_status = voting_terminal.cast_vote(voter_id, candidate_index)
                 if vote_status:
                     break
                 else:
-                    print("Invalid vote. Please try again.")
+                    print("\033[91mInvalid vote. Please try again.\033[0m\n")
     elif mode == "automatic":
-        vote_cast = [random.randint(1, num_candidates) for _ in range(random.randint(num_voters//2, num_voters))]
+        print("\033[96mAutomatic Voting Mode\033[0m\n")
+        vote_cast = [random.randint(1, num_candidates) for _ in range(random.randint(num_voters // 2, num_voters))]
         vote_result = [vote_cast.count(i) for i in range(1, num_candidates + 1)]
         voter_ids = voting_terminal.get_voter_ids()
         for i, voter_id in enumerate(random.sample(voter_ids, len(vote_cast))):
@@ -292,4 +299,4 @@ if __name__ == "__main__":
         for i, candidate in enumerate(candidate_names):
             print(f"    \033[93m{candidate} : \033[92m{vote_result[i]}\033[0m")
     else:
-        print("Error! Invalid voting mode selected. Please select 'manual' or 'automatic'.")
+        print("\033[91mError! Invalid voting mode selected. Please select 'manual' or 'automatic'.\033[0m")
