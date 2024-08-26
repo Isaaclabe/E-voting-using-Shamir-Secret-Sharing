@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Load configuration from config.py
+NUM_VOTERS=$(python -c "import config; print(config.NUM_VOTERS)")
+CANDIDATES=$(python -c "import config; print(config.CANDIDATES)")
+NUM_SHARES=$(python -c "import config; print(config.NUM_SHARES)")
+THRESHOLD=$(python -c "import config; print(config.THRESHOLD)")
+DURATION=$(python -c "import config; print(config.ELECTION_DURATION)")
+BUFFER_SIZE=$(python -c "import config; print(config.BUFFER_SIZE)")
+
+# Run the Authority Center with the loaded configuration
+python authority_center.py --num_voters "$NUM_VOTERS" \
+                           --candidates "$CANDIDATES" \
+                           --num_shares "$NUM_SHARES" \
+                           --threshold "$THRESHOLD" \
+                           --duration "$DURATION" \
+                           --buffer_size "$BUFFER_SIZE"

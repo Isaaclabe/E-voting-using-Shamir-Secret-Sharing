@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Load configuration from config.py
+NUM_VOTERS=$(python -c "import config; print(config.NUM_VOTERS)")
+CANDIDATES=$(python -c "import config; print(config.CANDIDATES)")
+NUM_SHARES=$(python -c "import config; print(config.NUM_SHARES)")
+THRESHOLD=$(python -c "import config; print(config.THRESHOLD)")
+BUFFER_SIZE=$(python -c "import config; print(config.BUFFER_SIZE)")
+MODE=$(python -c "import config; print(config.MODE)")
+N=$(python -c "import config; print(config.N)")
+
+# Run the Voting Terminal with the loaded configuration
+python voting_terminal.py --num_voters "$NUM_VOTERS" \
+                          --candidates "$CANDIDATES" \
+                          --num_shares "$NUM_SHARES" \
+                          --threshold "$THRESHOLD" \
+                          --buffer_size "$BUFFER_SIZE"\
+                          --mode "$MODE"\
+                          --N "$N"
+
