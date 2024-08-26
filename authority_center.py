@@ -286,14 +286,14 @@ if __name__ == "__main__":
     and manages the election process.
     """
     # Set up command-line argument parsing with default values
-    parser = argparse.ArgumentParser(description="Election System Parameters")
+    parser = argparse.ArgumentParser(description="\033[96mElection System Parameters\033[0m")
     parser.add_argument("--num_voters", type=int, default=10, help="Number of voters (default: 10)")
-    parser.add_argument("--candidates", type=str, default="Alice,Bob,Charles,David", help="Comma-separated list of candidate names (default: Candidate1,Candidate2,Candidate3,Candidate4)")
+    parser.add_argument("--candidates", type=str, default="Alice,Bob,Charles,David", help="Comma-separated list of candidate names (default: Alice,Bob,Charles,David)")
     parser.add_argument("--num_shares", type=int, default=4, help="Number of shares for secret sharing (default: 4)")
     parser.add_argument("--threshold", type=int, default=3, help="Threshold for secret reconstruction (default: 3)")
     parser.add_argument("--duration", type=int, default=1, help="Election duration in minutes (default: 1)")
     parser.add_argument("--buffer_size", type=int, default=16384, help="Buffer size for data transmission (default: 16384)")
-    
+
     args = parser.parse_args()
     
     # Parameters Setup from command line arguments
@@ -301,52 +301,56 @@ if __name__ == "__main__":
     num_voters = args.num_voters
     num_candidates = len(candidate_names)
     
-    num_bits_per_vote = math.floor(math.log2(num_voters)) + 1  # Bits needed to represent each vote
-    total_vote_bits = num_bits_per_vote * num_candidates  # Total number of bits to represent all votes
+    num_bits_per_vote = math.floor(math.log2(num_voters)) + 1
+    total_vote_bits = num_bits_per_vote * num_candidates
     
-    prime_number = nextprime(2**(total_vote_bits - num_bits_per_vote) * (num_candidates + 1))  # Large prime number
+    prime_number = nextprime(2**(total_vote_bits - num_bits_per_vote) * (num_candidates + 1))
     num_shares = args.num_shares
     threshold = args.threshold
     election_duration = timedelta(minutes=args.duration)
     buffer_size = args.buffer_size
     
-    print(f"\033[96mWelcome to the Authority center!\033[0m\n")
+    print(f"\033[96m=== Welcome to the Authority Center! ===\033[0m\n")
     
     # Initialize the Central Server
+    print(f"\033[94mInitializing the Authority Center...\033[0m")
     authority_center = AuthorityCenter(num_voters, num_candidates, num_bits_per_vote, num_shares, threshold, prime_number, buffer_size)
+    print(f"\033[92mAuthority Center Initialized Successfully!\033[0m\n")
     
-    print(f"\033[93mInitialization of the external servers...\033[0m")
+    print(f"\033[93mStarting the External Servers...\033[0m")
     authority_center.start_external_servers()
     
     # Start the central server in a separate thread
+    print(f"\033[93mStarting the Authority Center Server...\033[0m")
     server_thread = threading.Thread(target=authority_center.start_authority_center)
     server_thread.start()
     
     # Start the election
     election_start = datetime.now()
-    print(f"\nElection opened on: {election_start.strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"\n\033[92mElection opened on: {election_start.strftime('%Y-%m-%d %H:%M:%S')}\033[0m")
     
     # Print election details
-    print("\nElection Details:")
-    print(f"Number of registered Voters: {num_voters}")
-    print(f"Number of Candidates: {num_candidates}")
+    print("\n\033[96m=== Election Details ===\033[0m")
+    print(f"\033[93mNumber of Registered Voters: {num_voters}\033[0m")
+    print(f"\033[93mNumber of Candidates: {num_candidates}\033[0m")
     
     # Display voter IDs
-    print("\nVoter IDs:")
+    print("\n\033[96m=== Registered Voter IDs ===\033[0m")
     for voter_id in authority_center.get_voter_ids():
-        print(voter_id)
+        print(f"\033[94m{voter_id}\033[0m")
     
     # Set a deadline for the election
     election_deadline = election_start + election_duration
-    print(f"\nElection will close at: {election_deadline.strftime('%Y-%m-%d %H:%M:%S')}\n")
+    print(f"\n\033[93mElection will close at: {election_deadline.strftime('%Y-%m-%d %H:%M:%S')}\033[0m\n")
     
     # Countdown timer
+    print("\033[96m=== Election Timer ===\033[0m")
     while datetime.now() < election_deadline:
         time_remaining = election_deadline - datetime.now()
-        print(f"Time remaining until election closes: {time_remaining}", end='\r')
+        print(f"\033[93mTime remaining until election closes: {time_remaining}\033[0m", end='\r')
         time.sleep(1)
     
-    print(f"\033[92mElection closed. Processing results...\033[0m\n")
+    print(f"\n\033[92mElection closed. Processing results...\033[0m\n")
     successful = authority_center.process_election_results()
     
     if successful:
@@ -359,7 +363,11 @@ if __name__ == "__main__":
         print("\033[91mElection processing failed due to errors.\033[0m")
 
     # Clean up external servers
+    print(f"\033[93mCleaning up external servers...\033[0m")
     authority_center.delete_data_from_external_servers(authority_center.get_external_server_ports())
+    
+    print(f"\033[92mAll operations completed. Terminating program.\033[0m")
     
     # Terminate the program
     os._exit(0)
+
