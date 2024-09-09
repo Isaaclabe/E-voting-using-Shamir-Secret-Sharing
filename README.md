@@ -54,13 +54,14 @@ pip -r install requirements.txt
 
 ### Running the code
 
-1. **Start the Authority Center**: The central server that start the extenal servers, manages voter authentication and aggregates the votes.
+1. **Run the Authority Center**: This central server is responsible for starting external servers, handling voter authentication, and aggregating votes.
 
    ```bash
    chmod +x make_authority.sh
    ./make_authority.sh
    ```
-You need to run the authority center firstly.
+
+Make sure to run the authority center first.
 
 2. **Run the Voting Terminal**: This client application allows voters to cast their votes.
 
@@ -71,7 +72,7 @@ You need to run the authority center firstly.
 
 ### Command-Line Arguments
 
-You can customize the election parameters by using command-line arguments when starting the Authority Center and Voting Terminal:
+You can customize the election parameters in the `config.sh` file:
 
 - **`--num_voters`**: Number of registered voters.
 - **`--candidates`**: Comma-separated list of candidate names.
